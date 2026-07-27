@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { LECTURE_NUMBERS } from '@/lib/constants';
 import { ClipboardCheck, CheckCircle2, Clock, XCircle, Users, Check, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function TakeAttendancePage() {
+function TakeAttendanceContent() {
   const searchParams = useSearchParams();
   const initialClassId = searchParams.get('classId') || '';
   const initialSubjectId = searchParams.get('subjectId') || '';
@@ -365,5 +365,19 @@ export default function TakeAttendancePage() {
         )}
       </form>
     </div>
+  );
+}
+
+export default function TakeAttendancePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-xs text-muted-foreground">
+          Loading attendance sheet...
+        </div>
+      }
+    >
+      <TakeAttendanceContent />
+    </Suspense>
   );
 }
