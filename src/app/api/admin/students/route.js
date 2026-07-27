@@ -29,9 +29,9 @@ export async function POST(request) {
     await dbConnect();
     const { rollNumber, studentName, contactNumber, fatherContactNumber, motherContactNumber, classId } = await request.json();
 
-    if (!rollNumber || !studentName || !contactNumber || !fatherContactNumber || !classId) {
+    if (!rollNumber || !studentName || !contactNumber || !classId) {
       return NextResponse.json(
-        { success: false, message: 'All fields (Roll Number, Name, Contact, Father Contact, Class) are required.' },
+        { success: false, message: 'All fields (Roll Number, Name, Contact, Class) are required.' },
         { status: 400 }
       );
     }

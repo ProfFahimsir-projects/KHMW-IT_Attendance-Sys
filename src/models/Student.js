@@ -19,7 +19,8 @@ const StudentSchema = new mongoose.Schema(
     },
     fatherContactNumber: {
       type: String,
-      required: [true, 'Please provide father contact number'],
+      required: false,
+      default: '',
       trim: true,
     },
     motherContactNumber: {
