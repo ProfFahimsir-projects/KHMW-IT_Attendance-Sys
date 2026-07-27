@@ -136,21 +136,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Quick Demo Credentials Assistant */}
-          <div className="mt-6 border-t border-border/60 pt-4">
-            <p className="text-center text-[11px] font-semibold text-muted-foreground">
-              Demo Access Shortcuts
-            </p>
-            <div className="mt-2 flex justify-center gap-2">
-              <button
-                onClick={fillDemoAdmin}
-                className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-1.5 text-[11px] font-medium text-foreground hover:bg-muted transition-colors"
-              >
-                <ShieldCheck className="h-3.5 w-3.5 text-brand-500" />
-                Fill Admin Credentials
-              </button>
-            </div>
-          </div>
         </div>
 
         <p className="mt-6 text-center text-[11px] text-muted-foreground">

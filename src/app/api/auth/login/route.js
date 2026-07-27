@@ -19,9 +19,9 @@ export async function POST(request) {
       );
     }
 
-    // Auto-seed default Admin and initial structure if database has zero users
-    const userCount = await User.countDocuments();
-    if (userCount === 0) {
+    // Auto-seed default Admin if no ADMIN user exists
+    const adminExists = await User.findOne({ role: 'ADMIN' });
+    if (!adminExists) {
       const defaultAdminEmail = process.env.DEFAULT_ADMIN_EMAIL || 'admin@khmw.edu.in';
       const defaultAdminPassword = process.env.DEFAULT_ADMIN_PASSWORD || 'Admin@KHMW2026!';
       
