@@ -59,8 +59,8 @@ export default function ManageStudentsPage() {
 
   const handleSaveStudent = async (e) => {
     e.preventDefault();
-    if (!rollNumber || !studentName || !contactNumber || !fatherContactNumber || !motherContactNumber || !formClassId) {
-      toast.error('All student fields are required');
+    if (!rollNumber || !studentName || !contactNumber || !fatherContactNumber || !formClassId) {
+      toast.error('All required fields must be filled');
       return;
     }
 
@@ -351,13 +351,12 @@ export default function ManageStudentsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-foreground mb-1">Mother Contact Number</label>
+                <label className="block text-xs font-semibold text-foreground mb-1">Mother Contact Number <span className="text-muted-foreground">(optional)</span></label>
                 <input
                   type="tel"
                   value={motherContactNumber}
                   onChange={(e) => setMotherContactNumber(e.target.value)}
                   placeholder="9876543221"
-                  required
                   className="w-full rounded-xl border border-input bg-background px-3 py-2 text-xs font-mono"
                 />
               </div>

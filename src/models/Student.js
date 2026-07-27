@@ -24,7 +24,8 @@ const StudentSchema = new mongoose.Schema(
     },
     motherContactNumber: {
       type: String,
-      required: [true, 'Please provide mother contact number'],
+      required: false,
+      default: '',
       trim: true,
     },
     classId: {
