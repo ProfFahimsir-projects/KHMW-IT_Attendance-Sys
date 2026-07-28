@@ -118,7 +118,7 @@ export default function ReportsPage() {
                 <th className="px-4 py-3">Lecture</th>
                 <th className="px-4 py-3">Class</th>
                 <th className="px-4 py-3">Subject</th>
-                <th className="px-4 py-3">Roll No.</th>
+                <th className="px-4 py-3">Gr No.</th>
                 <th className="px-4 py-3">Student Name</th>
                 <th className="px-4 py-3">Status</th>
               </tr>

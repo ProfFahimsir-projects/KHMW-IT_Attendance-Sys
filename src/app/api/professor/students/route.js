@@ -19,7 +19,13 @@ export async function GET(request) {
       );
     }
 
-    const students = await Student.find({ classId, status: 'ACTIVE' }).sort({ rollNumber: 1 });
+    const students = await Student.find({ classId, status: 'ACTIVE' });
+    students.sort((a, b) => {
+      const numA = parseInt(a.rollNumber, 10);
+      const numB = parseInt(b.rollNumber, 10);
+      if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+      return a.rollNumber.localeCompare(b.rollNumber);
+    });
     return NextResponse.json({
       success: true,
       data: { students },

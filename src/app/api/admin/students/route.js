@@ -14,7 +14,13 @@ export async function GET(request) {
       query.classId = classId;
     }
 
-    const students = await Student.find(query).populate('classId').sort({ rollNumber: 1 });
+    const students = await Student.find(query).populate('classId');
+    students.sort((a, b) => {
+      const numA = parseInt(a.rollNumber, 10);
+      const numB = parseInt(b.rollNumber, 10);
+      if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+      return a.rollNumber.localeCompare(b.rollNumber);
+    });
     return NextResponse.json({ success: true, data: { students } });
   } catch (error) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });

@@ -139,11 +139,18 @@ export default function ManageStudentsPage() {
     }
   };
 
-  const filteredStudents = students.filter(
-    (s) =>
-      s.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.rollNumber.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredStudents = students
+    .filter(
+      (s) =>
+        s.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.rollNumber.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      const numA = parseInt(a.rollNumber, 10);
+      const numB = parseInt(b.rollNumber, 10);
+      if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+      return a.rollNumber.localeCompare(b.rollNumber);
+    });
 
   return (
     <div className="space-y-6">
@@ -199,7 +206,7 @@ export default function ManageStudentsPage() {
           <table className="w-full text-left text-xs">
             <thead className="border-b border-border/60 bg-muted/40 font-semibold text-muted-foreground uppercase">
               <tr>
-                <th className="px-6 py-3.5">Roll No.</th>
+                <th className="px-6 py-3.5">Gr No.</th>
                 <th className="px-6 py-3.5">Student Name</th>
                 <th className="px-6 py-3.5">Class</th>
                 <th className="px-6 py-3.5">Student Contact</th>

@@ -39,11 +39,18 @@ export default function StudentProfilesContent() {
       .catch(() => setLoading(false));
   }, [selectedClassId]);
 
-  const filteredStudents = students.filter(
-    (s) =>
-      s.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.rollNumber.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredStudents = students
+    .filter(
+      (s) =>
+        s.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.rollNumber.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      const numA = parseInt(a.rollNumber, 10);
+      const numB = parseInt(b.rollNumber, 10);
+      if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+      return a.rollNumber.localeCompare(b.rollNumber);
+    });
 
   return (
     <div className="space-y-6">
