@@ -20,7 +20,7 @@ export async function GET(request, { params }) {
       return NextResponse.json({ success: false, message: 'Student not found' }, { status: 404 });
     }
 
-    let query = { classId: student.classId._id };
+    let query = { classId: student.classId._id, 'records.studentId': id };
     if (subjectId) query.subjectId = subjectId;
 
     if (month) {
@@ -36,9 +36,7 @@ export async function GET(request, { params }) {
 
     const records = [];
     for (const att of attendances) {
-      const rec = att.records.find(
-        (r) => r.studentId.toString() === id
-      );
+      const rec = att.records.find((r) => r.studentId.toString() === id);
       if (rec) {
         records.push({
           _id: att._id,

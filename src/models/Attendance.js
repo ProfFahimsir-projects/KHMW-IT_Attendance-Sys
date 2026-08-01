@@ -59,4 +59,10 @@ AttendanceSchema.index(
   { unique: true }
 );
 
+// Support class-level queries (attendance management, analytics) without a date filter
+AttendanceSchema.index({ classId: 1, date: -1 });
+
+// Support per-student attendance lookups in a single query
+AttendanceSchema.index({ 'records.studentId': 1 });
+
 export default mongoose.models.Attendance || mongoose.model('Attendance', AttendanceSchema);

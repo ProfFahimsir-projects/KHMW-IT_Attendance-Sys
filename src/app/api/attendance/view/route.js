@@ -1,5 +1,6 @@
 import dbConnect from '@/lib/db';
 import Attendance from '@/models/Attendance';
+import AcademicYear from '@/models/AcademicYear';
 import { requireAuth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 
@@ -14,11 +15,19 @@ export async function GET(request) {
     const subjectId = searchParams.get('subjectId');
     const date = searchParams.get('date');
     const lectureNumber = searchParams.get('lectureNumber');
+    const academicYearId = searchParams.get('academicYearId');
 
     let query = {};
     if (classId) query.classId = classId;
     if (subjectId) query.subjectId = subjectId;
     if (lectureNumber) query.lectureNumber = lectureNumber;
+    if (academicYearId) {
+      query.academicYearId = academicYearId;
+    } else if (!date) {
+      // Scope unfiltered queries to the active academic year to avoid full historical scans
+      const activeYear = await AcademicYear.findOne({ isCurrent: true }).select('_id').lean();
+      if (activeYear) query.academicYearId = activeYear._id;
+    }
     if (date) {
       const dateObj = new Date(date);
       dateObj.setUTCHours(0, 0, 0, 0);

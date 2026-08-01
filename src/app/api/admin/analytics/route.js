@@ -19,23 +19,24 @@ export async function GET(request) {
     const totalStudents = await Student.countDocuments({ status: 'ACTIVE' });
     const totalClasses = await Class.countDocuments({});
 
-    // Compute overall college attendance percentage
-    const allAttendanceSessions = await Attendance.find({});
-    let totalRecordsCount = 0;
-    let presentOrLateCount = 0;
+    // Compute overall college attendance percentage with a single aggregation
+    const overallAgg = await Attendance.aggregate([
+      { $unwind: '$records' },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: 1 },
+          present: {
+            $sum: { $cond: [{ $in: ['$records.status', ['Present', 'Late']] }, 1, 0] },
+          },
+        },
+      },
+    ]);
 
-    allAttendanceSessions.forEach((session) => {
-      session.records.forEach((rec) => {
-        totalRecordsCount++;
-        if (rec.status === 'Present' || rec.status === 'Late') {
-          presentOrLateCount++;
-        }
-      });
-    });
-
-    const overallPercentage = totalRecordsCount > 0 
-      ? Math.round((presentOrLateCount / totalRecordsCount) * 100) 
-      : 0;
+    const overallPercentage =
+      overallAgg.length > 0 && overallAgg[0].total > 0
+        ? Math.round((overallAgg[0].present / overallAgg[0].total) * 100)
+        : 0;
 
     // Monthly trends computation
     const monthlyStats = [
@@ -48,26 +49,31 @@ export async function GET(request) {
       { month: 'Jul', attendance: overallPercentage || 85 },
     ];
 
-    // Class wise comparison
-    const classList = await Class.find({});
-    const classComparison = await Promise.all(
-      classList.map(async (c) => {
-        const classSessions = await Attendance.find({ classId: c._id });
-        let total = 0;
-        let present = 0;
-        classSessions.forEach((sess) => {
-          sess.records.forEach((r) => {
-            total++;
-            if (r.status === 'Present' || r.status === 'Late') present++;
-          });
-        });
-        const pct = total > 0 ? Math.round((present / total) * 100) : 85;
-        return {
-          className: c.className,
-          attendance: pct,
-        };
-      })
-    );
+    // Class wise comparison with a single aggregation across all classes
+    const classList = await Class.find({}).select('className').lean();
+    const classAgg = await Attendance.aggregate([
+      { $unwind: '$records' },
+      {
+        $group: {
+          _id: '$classId',
+          total: { $sum: 1 },
+          present: {
+            $sum: { $cond: [{ $in: ['$records.status', ['Present', 'Late']] }, 1, 0] },
+          },
+        },
+      },
+    ]);
+
+    const classStats = new Map(classAgg.map((c) => [c._id.toString(), c]));
+    const classComparison = classList.map((c) => {
+      const stats = classStats.get(c._id.toString());
+      const total = stats?.total || 0;
+      const present = stats?.present || 0;
+      return {
+        className: c.className,
+        attendance: total > 0 ? Math.round((present / total) * 100) : 85,
+      };
+    });
 
     return NextResponse.json({
       success: true,
