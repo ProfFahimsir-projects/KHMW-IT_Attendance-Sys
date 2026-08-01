@@ -13,6 +13,23 @@ export async function GET(request) {
       );
     }
 
+    // Basic mode: return identity from the JWT without a DB round trip
+    // (used by the dashboard layout for the header/sidebar)
+    const { searchParams } = new URL(request.url);
+    if (searchParams.get('basic') === '1') {
+      return NextResponse.json({
+        success: true,
+        data: {
+          user: {
+            id: authUser.id,
+            name: authUser.name,
+            email: authUser.email,
+            role: authUser.role,
+          },
+        },
+      });
+    }
+
     await dbConnect();
     const user = await User.findById(authUser.id).select('-password');
     if (!user) {

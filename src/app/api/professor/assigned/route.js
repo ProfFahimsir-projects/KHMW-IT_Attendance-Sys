@@ -10,14 +10,8 @@ export async function GET(request) {
 
   try {
     await dbConnect();
-    
-    // Find current active academic year
-    const activeYear = await AcademicYear.findOne({ isCurrent: true });
 
     let query = { professorId: user.id };
-    if (activeYear) {
-      query.academicYearId = activeYear._id;
-    }
 
     // If ADMIN, option to view all assignments
     if (user.role === 'ADMIN') {
@@ -30,11 +24,23 @@ export async function GET(request) {
       }
     }
 
-    const assignments = await SubjectAssignment.find(query)
-      .populate('classId', 'className division')
-      .populate('subjectId', 'subjectCode subjectName')
-      .populate('academicYearId', 'yearLabel isCurrent')
-      .sort({ createdAt: -1 });
+    const [activeYear, allAssignments] = await Promise.all([
+      AcademicYear.findOne({ isCurrent: true }).select('_id').lean(),
+      SubjectAssignment.find(query)
+        .populate('classId', 'className division')
+        .populate('subjectId', 'subjectCode subjectName')
+        .populate('academicYearId', 'yearLabel isCurrent')
+        .sort({ createdAt: -1 })
+        .lean(),
+    ]);
+
+    // Scope to the active academic year in memory (data is small) to save a round trip
+    const assignments = activeYear
+      ? allAssignments.filter((a) => {
+          const yearId = a.academicYearId?._id || a.academicYearId;
+          return yearId ? yearId.toString() === activeYear._id.toString() : false;
+        })
+      : allAssignments;
 
     return NextResponse.json({
       success: true,

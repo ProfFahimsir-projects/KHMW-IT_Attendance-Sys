@@ -8,7 +8,7 @@ export default function DashboardLayout({ children }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch('/api/auth/me')
+    fetch('/api/auth/me?basic=1')
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.data.user) {
