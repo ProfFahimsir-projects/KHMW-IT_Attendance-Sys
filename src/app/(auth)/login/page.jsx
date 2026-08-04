@@ -116,14 +116,14 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-end">
-              <button
+              {/* <button
                 type="button"
                 onClick={() => router.push('/forgot-password')}
                 className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:text-primary/80 transition-colors"
               >
                 <KeyRound className="h-3 w-3" />
                 Forgot Password?
-              </button>
+              </button> */}
             </div>
 
             <button

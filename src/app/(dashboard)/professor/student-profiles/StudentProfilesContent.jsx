@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Search, Lock } from 'lucide-react';
+import { Search, Lock, RefreshCw, AlertTriangle } from 'lucide-react';
 
 export default function StudentProfilesContent() {
   const searchParams = useSearchParams();
@@ -12,32 +12,56 @@ export default function StudentProfilesContent() {
   const [selectedClassId, setSelectedClassId] = useState(initialClassId);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetch('/api/professor/assigned')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setAssignments(data.data.assignments);
-          if (!selectedClassId && data.data.assignments.length > 0) {
-            setSelectedClassId(data.data.assignments[0].classId?._id);
-          }
-        }
-      });
+  const fetchAssignments = useCallback(async () => {
+    try {
+      const res = await fetch('/api/professor/assigned');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data?.assignments)) {
+        setAssignments(data.data.assignments);
+        setSelectedClassId((prev) => {
+          if (prev) return prev;
+          return data.data.assignments[0]?.classId?._id || '';
+        });
+        setError(null);
+      } else {
+        setError(data.message || 'Failed to load assigned classes.');
+      }
+    } catch (err) {
+      setError('Network error. Please check your connection and try again.');
+    }
   }, []);
 
   useEffect(() => {
+    fetchAssignments();
+  }, [fetchAssignments]);
+
+  const fetchStudents = useCallback(async () => {
     if (!selectedClassId) return;
     setLoading(true);
-    fetch(`/api/professor/students?classId=${selectedClassId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setStudents(data.data.students);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    setError(null);
+    try {
+      const res = await fetch(`/api/professor/students?classId=${selectedClassId}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data?.students)) {
+        setStudents(data.data.students);
+      } else {
+        setStudents([]);
+        setError(data.message || 'Failed to load student roster.');
+      }
+    } catch (err) {
+      setStudents([]);
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   }, [selectedClassId]);
+
+  useEffect(() => {
+    fetchStudents();
+  }, [fetchStudents]);
 
   const filteredStudents = students
     .filter(
@@ -94,6 +118,20 @@ export default function StudentProfilesContent() {
 
       {/* Read-Only Roster Table */}
       <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
+        {error && (
+          <div className="flex flex-col items-center gap-2 p-6 text-center">
+            <AlertTriangle className="h-6 w-6 text-destructive" />
+            <p className="text-xs font-semibold text-foreground">{error}</p>
+            <button
+              onClick={() => (selectedClassId ? fetchStudents() : fetchAssignments())}
+              className="mt-1 inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground hover:bg-muted"
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+              Retry
+            </button>
+          </div>
+        )}
+        {!error && (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="border-b border-border/60 bg-muted/40 font-semibold text-muted-foreground uppercase">
@@ -144,6 +182,7 @@ export default function StudentProfilesContent() {
             </tbody>
           </table>
         </div>
+        )}
       </div>
 
       <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
