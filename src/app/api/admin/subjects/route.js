@@ -1,5 +1,6 @@
 import dbConnect from '@/lib/db';
 import Subject from '@/models/Subject';
+import Class from '@/models/Class';
 import { requireAuth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 

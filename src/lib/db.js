@@ -1,4 +1,11 @@
 import mongoose from 'mongoose';
+import '@/models/User';
+import '@/models/AcademicYear';
+import '@/models/Class';
+import '@/models/Subject';
+import '@/models/SubjectAssignment';
+import '@/models/Student';
+import '@/models/Attendance';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 

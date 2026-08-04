@@ -1,5 +1,6 @@
 import dbConnect from '@/lib/db';
 import Student from '@/models/Student';
+import Class from '@/models/Class';
 import { requireAuth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 

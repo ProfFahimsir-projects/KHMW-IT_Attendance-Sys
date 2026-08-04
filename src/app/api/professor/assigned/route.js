@@ -1,6 +1,8 @@
 import dbConnect from '@/lib/db';
 import SubjectAssignment from '@/models/SubjectAssignment';
 import AcademicYear from '@/models/AcademicYear';
+import Class from '@/models/Class';
+import Subject from '@/models/Subject';
 import { requireAuth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 
