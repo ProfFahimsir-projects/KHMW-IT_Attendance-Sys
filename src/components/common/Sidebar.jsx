@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   School,
+  Clock,
   UserCircle,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -32,6 +33,7 @@ export default function Sidebar({ userRole = 'ADMIN' }) {
     { name: 'Classes', href: '/admin/classes', icon: School },
     { name: 'Subjects', href: '/admin/subjects', icon: BookOpen },
     { name: 'Academic Years', href: '/admin/academic-years', icon: Calendar },
+    { name: 'Timetable', href: '/admin/timetable', icon: Clock },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
     { name: 'Attendance Hub', href: '/admin/attendance-management', icon: ClipboardCheck },
     { name: 'Reports', href: '/admin/reports', icon: FileText },
@@ -41,6 +43,7 @@ export default function Sidebar({ userRole = 'ADMIN' }) {
   const professorLinks = [
     { name: 'Dashboard', href: '/professor/dashboard', icon: LayoutDashboard },
     { name: 'Take Attendance', href: '/professor/take-attendance', icon: ClipboardCheck },
+    { name: 'Timetable', href: '/professor/timetable', icon: Clock },
     { name: 'Assigned Classes', href: '/professor/assigned-classes', icon: School },
     { name: 'Assigned Subjects', href: '/professor/assigned-subjects', icon: BookOpen },
     { name: 'Student Profiles', href: '/professor/student-profiles', icon: GraduationCap },
@@ -71,7 +74,7 @@ export default function Sidebar({ userRole = 'ADMIN' }) {
       {/* Sidebar Container */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl transition-transform duration-300 lg:static lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl transition-transform duration-300 lg:translate-x-0',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >

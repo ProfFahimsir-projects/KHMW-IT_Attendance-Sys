@@ -6,6 +6,7 @@ import '@/models/Subject';
 import '@/models/SubjectAssignment';
 import '@/models/Student';
 import '@/models/Attendance';
+import '@/models/Timetable';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 

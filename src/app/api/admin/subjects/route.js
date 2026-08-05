@@ -15,7 +15,7 @@ export async function GET(request) {
       query.classId = classId;
     }
 
-    const subjects = await Subject.find(query).populate('classId').sort({ subjectName: 1 });
+    const subjects = await Subject.find(query).populate('classId').sort({ subjectCode: 1 });
     return NextResponse.json({ success: true, data: { subjects } });
   } catch (error) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
